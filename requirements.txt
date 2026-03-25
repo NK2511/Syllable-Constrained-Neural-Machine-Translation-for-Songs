@@ -21,3 +21,4 @@ bitsandbytes
 trl
 epitran
 notebook
+google-generativeai
