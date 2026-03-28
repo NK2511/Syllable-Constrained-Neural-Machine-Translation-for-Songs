@@ -1,55 +1,34 @@
-# Prosody-Constrained Neural Lyric Translation (PC-NLT)
+# Syllable-Constrained Neural Machine Translation for Songs
 
-## Project Description
+This project explores the translation of English songs into Hindi with a focus on **emotional purport** and **rhythmic constraints**.
 
-Prosody-Constrained Neural Lyric Translation (PC-NLT) is a natural language processing system designed to translate English song lyrics into Hindi while preserving semantic meaning and maintaining singability. Unlike conventional machine translation systems, which focus solely on semantic equivalence, PC-NLT incorporates prosodic constraints—specifically syllable count alignment—to ensure that the translated lyrics can be sung to the same melody as the original.
+---
 
-The system operates at the line level, processing each lyric line independently. For every input line, the model performs the following steps:
+## 🏗️ Core Metrics
+The project is built around finding the right balance between:
+1. **Purport**: Capturing the high-level intent/vibe.
+2. **Actual Meaning**: Semantic accuracy.
+3. **Syllable Matching**: Rhythmic singability.
+4. **Informality**: Ensuring a natural Bollywood lyrical style.
 
-1. **Syllable Analysis of the English line**
-2. **Neural Generation of Multiple Hindi Candidates**
-3. **Syllable Counting and Constraint Verification**
-4. **Semantic Similarity Scoring to ensure meaning preservation**
-5. **Fluency and Naturalness Evaluation**
-6. **Selection of the Best Candidate Based on a Weighted Ranking Mechanism**
+---
 
-Rather than producing literal translations, PC-NLT generates loosely adapted Hindi lyrics that reflect the original purport while resembling modern Hindi song style. The system prioritizes natural phrasing and conversational tone over formal or dictionary-like translation.
+## 📂 Key Files (.py)
 
-## Installation
+### 1. [syllable_counter.py](syllable_counter.py)
+*   **Purpose**: Counts syllables in both English and Hindi. 
+*   **Logic**: Uses phoneme-based counting for English (CMU Dict) and orthographic 'Akshar' counting for Hindi (based on Unicode analysis). This is used to ensure translation candidates fit the song's beat.
 
-To set up the project environment, follow these steps:
+### 2. [semantic_calculator.py](semantic_calculator.py)
+*   **Purpose**: A tool to compare the "Vibe" (Purport) of any two sentences. 
+*   **Logic**: Uses a local Multilingual Transformer model to turn sentences into numbers (vectors). You can input any English and Hindi sentence to see a similarity score (0.0 to 1.0) showing how closely their meanings align in a conceptual space.
 
-1.  **Clone the repository:**
-    ```bash
-    git clone <repository_url>
-    cd Syllable-Constrained-Neural-Machine-Translation-for-Songs
-    ```
+### 3. [semantic_translator.py](semantic_translator.py)
+*   **Purpose**: A search engine that finds the best Hindi "Dub" for an English line.
+*   **Logic**: It indexes all 43,000+ lines from the Bollywood database. When you enter an English line, it instantly scans the entire database to find the Hindi lyrics that most closely match the **Purport** of your input.
 
-2.  **Create a virtual environment:**
-    ```bash
-    python -m venv nlp_venv
-    ```
+---
 
-3.  **Activate the virtual environment:**
-    *   On Windows:
-        ```bash
-        nlp_venv\Scripts\activate
-        ```
-    *   On macOS/Linux:
-        ```bash
-        source nlp_venv/bin/activate
-        ```
-
-4.  **Install the required dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-## Technology Stack
-
-*   **Core:** Python
-*   **Deep Learning:** PyTorch, Transformers, Accelerate
-*   **NLP Tools:** NLTK, Indic NLP Library, inltk, polyglot, textstat
-*   **Phonetics & Syllables:** Pyphen, Epitran
-*   **Evaluation:** BLEU, METEOR, BERTScore, SacreBLEU
-*   **Data Handling:** Pandas, NumPy, Datasets
+## 📊 Data
+- **Hindi_Lyrics_Database**: A collection of ~1,210 Hindi song lyric files.
+- **hindi_lyrics_embeddings.pt**: A pre-computed cache of semantic vectors for near-instant searching.
