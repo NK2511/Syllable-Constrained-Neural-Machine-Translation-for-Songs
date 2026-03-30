@@ -1,3 +1,5 @@
 nltk
 pyphen
 indic-nlp-library
+sentence-transformers
+torch

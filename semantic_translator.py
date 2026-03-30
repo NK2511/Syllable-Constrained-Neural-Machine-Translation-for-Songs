@@ -32,7 +32,13 @@ def get_or_create_embeddings(model, lines):
     if os.path.exists(CACHE_FILE):
         print(f"Loading cached embeddings from {CACHE_FILE}...")
         data = torch.load(CACHE_FILE)
-        return data['lines'], data['embeddings']
+        
+        # Auto-detect changes: Compare cached lines with current DB lines
+        if data.get('lines') == lines:
+            print("Cache is up to date.")
+            return data['lines'], data['embeddings']
+        else:
+            print("Change detected in Lyrics Database! Re-calculating embeddings...")
     
     print("Calculating embeddings (this may take a few minutes on the first run)...")
     embeddings = model.encode(lines, convert_to_tensor=True, show_progress_bar=True)
