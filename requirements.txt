@@ -3,3 +3,7 @@ pyphen
 indic-nlp-library
 sentence-transformers
 torch
+pyttsx3
+indic-transliteration
+gTTS
+pygame
