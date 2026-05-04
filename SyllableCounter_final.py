@@ -395,3 +395,24 @@ if __name__ == '__main__':
     run_english(ENGLISH_SENTENCES)
     run_hindi(HINDI_SENTENCES)
     print()
+
+# =========================
+# SIMPLE FUNCTIONS (USE THESE)
+# =========================
+
+def count_english_syllables(text: str) -> int:
+    _, _, _, count = english_steps(text)
+    return count
+
+
+def count_hindi_syllables(text: str) -> int:
+    import re
+    total = 0
+    words = text.strip().split()
+    for word in words:
+        clean = re.sub(r'[^\u0900-\u097F]', '', word)
+        if not clean:
+            continue
+        _, _, count = hindi_word_steps(clean)
+        total += count
+    return total

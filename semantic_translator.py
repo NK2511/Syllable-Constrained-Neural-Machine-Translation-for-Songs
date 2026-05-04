@@ -8,23 +8,44 @@ from sentence_transformers import SentenceTransformer, util
 # Step 1: Model Setup
 model_name = 'sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2'
 CACHE_FILE = "hindi_lyrics_embeddings.pt"
-DB_PATH = r"c:\Desktop\Python\Amrita_Vishwa_Vidyapeetam\Sem_6\Syllable-Constrained-Neural-Machine-Translation-for-Songs\Hindi_Lyrics_Database\scraped_lyrics_cleaned"
+DB_PATH = r"C:\Users\Hemanth\Desktop\NLP\Syllable-Constrained-Neural-Machine-Translation-for-Songs\Hindi_Lyrics_Database\scraped_lyrics_cleaned"
 
 def get_unique_hindi_lines():
     """Load all unique lines from the lyrics database."""
-    print("Reading Hindi database...")
+    print("\n🔍 Checking Hindi database path...")
+    print("DB_PATH:", DB_PATH)
+
+    if not os.path.exists(DB_PATH):
+        raise FileNotFoundError(f"❌ Path does not exist: {DB_PATH}")
+
     txt_files = glob.glob(os.path.join(DB_PATH, "*.txt"))
+
+    print(f"📂 Found {len(txt_files)} txt files")
+
+    if len(txt_files) == 0:
+        raise ValueError("❌ No .txt files found in the directory")
+
     unique_lines = set()
+
     for file in txt_files:
+        print(f"Reading: {file}")
         try:
             with open(file, 'r', encoding='utf-8') as f:
                 for line in f:
                     clean_line = line.strip()
-                    if clean_line and len(clean_line) > 5: # Filter noise
+
+                    # relaxed filter
+                    if clean_line:
                         unique_lines.add(clean_line)
-        except:
-            continue
-    print(f"Loaded {len(unique_lines)} unique Hindi lines.")
+
+        except Exception as e:
+            print(f"❌ Error reading {file}: {e}")
+
+    print(f"\n✅ Loaded {len(unique_lines)} unique Hindi lines.")
+
+    if len(unique_lines) == 0:
+        raise ValueError("❌ Files exist but no valid lines found")
+
     return sorted(list(unique_lines))
 
 def get_or_create_embeddings(model, lines):
