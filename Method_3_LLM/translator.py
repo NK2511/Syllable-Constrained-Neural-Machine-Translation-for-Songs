@@ -7,6 +7,9 @@ import random
 import pickle
 import pathlib
 import google.generativeai as genai
+import time
+import google.api_core.exceptions as google_exceptions
+
 
 # ==========================================
 # Step 1: Import SyllableCounter_final.py
@@ -115,8 +118,23 @@ def get_hindi_syllable_count(hindi_text):
     return count_hindi_silent(hindi_text)
 
 def call_llm(prompt):
-    response = model.generate_content(prompt)
-    return response.text.strip()
+    delay = 6
+    for attempt in range(6):
+        try:
+            response = model.generate_content(prompt)
+            return response.text.strip()
+        except google_exceptions.ResourceExhausted as e:
+            print(f"\n  [Rate Limit] Exceeded quota. Retrying in {delay}s... (Error: {e.message})")
+            time.sleep(delay)
+            delay = min(delay * 2, 60)
+        except Exception as e:
+            if "ResourceExhausted" in str(e) or "429" in str(e):
+                print(f"\n  [Rate Limit] Exceeded quota. Retrying in {delay}s...")
+                time.sleep(delay)
+                delay = min(delay * 2, 60)
+            else:
+                raise e
+    raise Exception("Exhausted all retries due to Gemini Rate Limits (429).")
 
 # ==========================================
 # Step 9: Retry Loop with Feedback

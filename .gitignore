@@ -156,3 +156,6 @@ cython_debug/
 # VS Code
 .vscode/
 *.code-workspace
+
+# Redundant legacy files
+redundant/
